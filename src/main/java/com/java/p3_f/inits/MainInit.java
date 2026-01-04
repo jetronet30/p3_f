@@ -3,8 +3,9 @@ package com.java.p3_f.inits;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.java.p3_f.inits.freeswitch.LibsInit;
+import com.java.p3_f.inits.freeswitch.ResourceCreator;
 import com.java.p3_f.inits.repo.RepoInit;
-import com.java.p3_f.inits.resources.ResourceCreator;
 
 
 
@@ -14,7 +15,7 @@ public class MainInit {
 
     public static void mainInit(){
         LOGGER.info("    ----- STARTING INITIALIZER -----    ");
-
+        LibsInit.initLibs();
         RepoInit.initRepos();
         ResourceCreator.createResource();
 

@@ -1,4 +1,4 @@
-package com.java.p3_f.inits.resources;
+package com.java.p3_f.inits.freeswitch;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
