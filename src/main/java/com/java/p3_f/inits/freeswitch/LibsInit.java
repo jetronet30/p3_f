@@ -13,8 +13,6 @@ import java.util.List;
 public class LibsInit {
     private static final Logger LOGGER = LoggerFactory.getLogger(LibsInit.class);
 
-    // FreeSWITCH-ის source-დან build-ისთვის საჭირო dependencies Ubuntu/Debian-ზე
-    // გაერთიანებული და დუბლიკატები მოხსნილია (ზედმეტები მოშორებული)
     private static final List<String> REQUIRED_PACKAGES = Arrays.asList(
             "autoconf", "automake", "libtool", "libtool-bin", "g++", "make",
             "libssl-dev", "pkg-config", "libcurl4-openssl-dev", "libexpat1-dev",
