@@ -35,7 +35,6 @@ public class LibsInit {
 
             List<String> missingPackages = new ArrayList<>();
 
-            // თითოეული პაკეტის შემოწმება
             for (String pkg : REQUIRED_PACKAGES) {
                 if (!isPackageInstalled(pkg)) {
                     missingPackages.add(pkg);
@@ -48,7 +47,6 @@ public class LibsInit {
                 LOGGER.info("აკლია პაკეტები: {}", missingPackages);
                 LOGGER.info("ვაყენებთ...");
 
-                // ერთი ბრძანებით ყველა missing პაკეტის დაყენება
                 List<String> installCmd = new ArrayList<>();
                 installCmd.add("sudo");
                 installCmd.add("apt");

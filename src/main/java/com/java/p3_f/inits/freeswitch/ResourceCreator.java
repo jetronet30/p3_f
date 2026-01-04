@@ -25,7 +25,7 @@ public class ResourceCreator {
 
             File[] existingFiles = OUT_DIR.listFiles();
             if (existingFiles != null && existingFiles.length > 0) {
-                LOGGER.info("fs უკვე ამოღებულია MAINREPO-ში: " + OUT_DIR.getAbsolutePath());
+                LOGGER.info("alreadi: " + OUT_DIR.getAbsolutePath());
                 return;
             }
 
