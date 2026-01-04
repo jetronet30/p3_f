@@ -5,19 +5,28 @@ import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 public class RepoInit {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RepoInit.class);
 
     public static final File MAIN_REPO = new File("./MAINREPO");
 
+    public static void initRepos() {
+        createDirectory(MAIN_REPO);
+    }
 
-    public static  void initRepos(){
-        LOGGER.info("...... init  repos !!!!!");
+    private static void createDirectory(File dir) {
+        try {
+            if (!dir.exists()) {
+                dir.mkdirs();
+                LOGGER.info("Directory created: " + dir.getAbsolutePath());
+            } else {
+                LOGGER.info("Directory already exists: " + dir.getAbsolutePath());
+            }
+        } catch (Exception e) {
+            LOGGER.error("" + e);
+        }
 
     }
-    
 
 }

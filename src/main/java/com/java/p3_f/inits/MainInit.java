@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.java.p3_f.inits.repo.RepoInit;
+import com.java.p3_f.inits.resources.ResourceCreator;
 
 
 
@@ -15,6 +16,7 @@ public class MainInit {
         LOGGER.info("    ----- STARTING INITIALIZER -----    ");
 
         RepoInit.initRepos();
+        ResourceCreator.createResource();
 
     }
 
