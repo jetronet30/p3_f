@@ -18,7 +18,7 @@ import java.util.jar.JarFile;
 public class ResourceCreator {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCreator.class);
 
-    private static final File OUT_DIR = RepoInit.MAIN_REPO;
+    private static final File OUT_DIR = RepoInit.USR_SRC;
 
     public static void createResource() {
         try {

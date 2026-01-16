@@ -10,9 +10,13 @@ public class RepoInit {
     private static final Logger LOGGER = LoggerFactory.getLogger(RepoInit.class);
 
     public static final File MAIN_REPO = new File("./MAINREPO");
+    public static final File SERVER_SETTINGS_REPO = new File(MAIN_REPO, "serversettings");
+    public static final File USR_SRC = new File("/usr/local/src");
 
     public static void initRepos() {
         createDirectory(MAIN_REPO);
+        createDirectory(SERVER_SETTINGS_REPO);
+        createDirectory(USR_SRC);
     }
 
     private static void createDirectory(File dir) {

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import com.java.p3_f.inits.freeswitch.LibsInit;
 import com.java.p3_f.inits.freeswitch.ResourceCreator;
 import com.java.p3_f.inits.repo.RepoInit;
+import com.java.p3_f.serversettings.network.DefaultNetwork;
 
 
 
@@ -15,10 +16,10 @@ public class MainInit {
 
     public static void mainInit(){
         LOGGER.info("    ----- STARTING INITIALIZER -----    ");
-        LibsInit.initLibs();
+        DefaultNetwork.createDefaultNetPlan();
         RepoInit.initRepos();
+        LibsInit.initLibs();
         ResourceCreator.createResource();
-
     }
 
 }

@@ -1,11 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>F PBX</title>
+  <link rel="stylesheet" th:href="@{/css/reboot.css}">
+  <link rel="stylesheet" th:href="@{/css/network.css}">
+  <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
+
 <body>
-    AAAAAAAAAAAAAAAAAAAAA
+  <aside class="sidebar">
+    <div class="logo">
+      <h1>F PBX</h1>
+      <p class="subtitle">interactive pbx</p>
+    </div>
+
+    <nav class="menu">
+      <button class="btn" id="dashboard" type="button"  formaction="/dashboard" text="DASHBOARD">DASHBOARD</button>
+      <div class="dropdown">
+        <button class="dropdown-toggle" id="settings">Settings <span class="arrow">▼</span></button>
+        <div class="dropdown-menu">
+          <button class="drop-btn" id="network" type="button" formaction="/network">Network</button>
+          <button class="drop-btn" id="owner" type="button" formaction="/owner">Owner</button>
+          <button class="drop-btn" id="backuprecovery" type="button" formaction="/backuprecovery">Backup And
+            Recovery</button>
+          <button class="drop-btn" id="administrator" type="button" formaction="/administrator">Administrator</button>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button class="dropdown-toggle" id="settings">SIP SETTINGS<span class="arrow">▼</span></button>
+        <div class="dropdown-menu">
+          <button class="drop-btn" id="sipserver" type="button" formaction="/sipserver">SIP Server</button>
+          <button class="drop-btn" id="sipusers" type="button" formaction="/sipusers">SIP Users</button>
+          <button class="drop-btn" id="trunks" type="button" formaction="/trunks">Trunks</button>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="dropdown-toggle" id="routing">ROUTING<span class="arrow">▼</span></button>
+        <div class="dropdown-menu">
+          <button class="drop-btn" id="inbound" type="button" formaction="/inbound">Inbound</button>
+          <button class="drop-btn" id="outbound" type="button" formaction="/outbound">Outbound</button>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="dropdown-toggle" id="aplications">APLICTIONS<span class="arrow">▼</span></button>
+        <div class="dropdown-menu">
+          <button class="drop-btn" id="groups" type="button" formaction="/groups">Groups</button>
+          <button class="drop-btn" id="queues" type="button" formaction="/queues">Queues</button>
+          <button class="drop-btn" id="ivr" type="button" formaction="/ivr">IVR</button>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="dropdown-toggle" id="sounds">SOUNDS<span class="arrow">▼</span></button>
+        <div class="dropdown-menu">
+          <button class="drop-btn" id="systemsounds" type="button" formaction="/systemsounds">System Sounds</button>
+          <button class="drop-btn" id="apsounds" type="button" formaction="/apsounds">AP Sounds</button>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="dropdown-toggle" id="services">SERVICES<span class="arrow">▼</span></button>
+        <div class="dropdown-menu">
+          <button class="drop-btn" id="servicecodes" type="button" formaction="/servicecodes">Service Codes</button>
+          <button class="drop-btn" id="apsounds" type="button" formaction="/apsounds"></button>
+        </div>
+      </div>
+      <div class="dropdown">
+        <button class="dropdown-toggle" id="hotelservices">HOTEL SERVICES<span class="arrow">▼</span></button>
+        <div class="dropdown-menu">
+          <button class="drop-btn" id="servicecodes" type="button" formaction="/servicecodes">Service Codes</button>
+          <button class="drop-btn" id="apsounds" type="button" formaction="/apsounds"></button>
+        </div>
+      </div>
+    </nav>
+  </aside>
+  <main class="content">
+  </main>
+  <script th:src="@{/scripts/main.js}"></script>
 </body>
+
 </html>
