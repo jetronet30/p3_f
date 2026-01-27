@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 
@@ -17,7 +20,6 @@ public class FreeSwitchInit implements CommandLineRunner {
 
     private static final String FS_BIN_PATH = "/usr/local/freeswitch/bin/freeswitch";
     private static final String SRC_DIR = "/usr/local/src";
-    
 
     @Override
     public void run(String... args) throws Exception {
@@ -29,7 +31,14 @@ public class FreeSwitchInit implements CommandLineRunner {
         }
 
         LOGGER.warn("FreeSWITCH not found. Starting source build and installation. This may take a long time!");
-        executeInstallationCommands();
+        try {
+            executeInstallationCommands();
+        } catch (Exception e) {
+            LOGGER.error("FreeSWITCH installation failed: {}", e.getMessage());
+            throw e;
+        }
+
+        createService();
         LOGGER.info("FreeSWITCH installation completed.");
     }
 
@@ -41,42 +50,47 @@ public class FreeSwitchInit implements CommandLineRunner {
         // ყველა კომანდა სიაში
         List<String[]> commands = Arrays.asList(
                 // spandsp
-                new String[]{"cd", SRC_DIR + "/spandsp"},
-                new String[]{"./bootstrap.sh"},
-                new String[]{"./configure"},
-                new String[]{"make"},
-                new String[]{"make", "install"},
-                new String[]{"ldconfig"},
+                new String[] { "cd", SRC_DIR + "/spandsp" },
+                new String[] { "./bootstrap.sh" },
+                new String[] { "./configure" },
+                new String[] { "make" },
+                new String[] { "make", "install" },
+                new String[] { "ldconfig" },
 
                 // sofia-sip
-                new String[]{"cd", SRC_DIR + "/sofia-sip"},
-                new String[]{"./autogen.sh"},
-                new String[]{"./configure"},
-                new String[]{"make"},
-                new String[]{"make", "install"},
-                new String[]{"ldconfig"},
+                new String[] { "cd", SRC_DIR + "/sofia-sip" },
+                new String[] { "./autogen.sh" },
+                new String[] { "./configure" },
+                new String[] { "make" },
+                new String[] { "make", "install" },
+                new String[] { "ldconfig" },
 
                 // freeswitch
-                new String[]{"cd", SRC_DIR+"/freeswitch"},
-                new String[]{"./bootstrap.sh", "-j"},
-                // modules.conf რედაქტირება (nano-ს ავტომატიზაცია რთულია, აქ კომენტარად ვტოვებთ ხელით)
+                new String[] { "cd", SRC_DIR + "/freeswitch" },
+                new String[] { "./bootstrap.sh", "-j" },
+                // modules.conf რედაქტირება (nano-ს ავტომატიზაცია რთულია, აქ კომენტარად ვტოვებთ
+                // ხელით)
                 // შენიშვნა: nano-ს ავტომატურად გაშვება შესაძლებელია sed-ით:
-                new String[]{"sed", "-i", "s/^applications\\/mod_signalwire/#applications\\/mod_signalwire/", "modules.conf"},
-                new String[]{"sed", "-i", "s/^applications\\/mod_signalwire_consumer/#applications\\/mod_signalwire_consumer/", "modules.conf"},
-                new String[]{"sed", "-i", "s/^applications\\/mod_signalwire_transcribe/#applications\\/mod_signalwire_transcribe/", "modules.conf"},
-                new String[]{"sed", "-i", "s/^applications\\/mod_verto/#applications\\/mod_verto/", "modules.conf"},
+                new String[] { "sed", "-i", "s/^applications\\/mod_signalwire/#applications\\/mod_signalwire/",
+                        "modules.conf" },
+                new String[] { "sed", "-i",
+                        "s/^applications\\/mod_signalwire_consumer/#applications\\/mod_signalwire_consumer/",
+                        "modules.conf" },
+                new String[] { "sed", "-i",
+                        "s/^applications\\/mod_signalwire_transcribe/#applications\\/mod_signalwire_transcribe/",
+                        "modules.conf" },
+                new String[] { "sed", "-i", "s/^applications\\/mod_verto/#applications\\/mod_verto/", "modules.conf" },
 
-                new String[]{"./configure"},
-                new String[]{"make"},
-                new String[]{"make", "install"},
-                new String[]{"make", "cd-sounds-install"},
-                new String[]{"make", "cd-moh-install"},
+                new String[] { "./configure" },
+                new String[] { "make" },
+                new String[] { "make", "install" },
+                new String[] { "make", "cd-sounds-install" },
+                new String[] { "make", "cd-moh-install" },
 
                 // user/group
-                new String[]{"groupadd", "freeswitch"},
-                new String[]{"useradd", "-r", "-g", "freeswitch", "-d", "/usr/local/freeswitch", "freeswitch"},
-                new String[]{"chown", "-R", "freeswitch:freeswitch", "/usr/local/freeswitch"}
-        );
+                new String[] { "groupadd", "freeswitch" },
+                new String[] { "useradd", "-r", "-g", "freeswitch", "-d", "/usr/local/freeswitch", "freeswitch" },
+                new String[] { "chown", "-R", "freeswitch:freeswitch", "/usr/local/freeswitch" });
 
         ProcessBuilder pb = new ProcessBuilder();
         pb.inheritIO(); // ლოგები კონსოლში გამოვა
@@ -98,5 +112,48 @@ public class FreeSwitchInit implements CommandLineRunner {
                 throw new RuntimeException("FreeSWITCH installation failed at: " + String.join(" ", cmd));
             }
         }
+    }
+
+    private void createService() {
+        Path servicePath = Path.of("/etc/systemd/system/freeswitch.service");
+
+        if (Files.exists(servicePath)) {
+            System.out.println("freeswitch.service უკვე არსებობს");
+            return;
+        }
+
+        String serviceContent = """
+                [Unit]
+                Description=FreeSWITCH
+                After=network.target
+
+                [Service]
+                Type=forking
+                Environment="DAEMON_OPTS=-nonat"
+                WorkingDirectory=/usr/local/freeswitch/bin
+                User=freeswitch
+                Group=freeswitch
+                ExecStartPre=/bin/sleep 20
+                ExecStart=/usr/local/freeswitch/bin/freeswitch -ncwait
+                ExecStop=/usr/local/freeswitch/bin/freeswitch -stop
+                Restart=always
+                LimitNOFILE=100000
+
+                [Install]
+                WantedBy=multi-user.target
+                """;
+        try {
+            Files.writeString(
+                    servicePath,
+                    serviceContent,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.WRITE);
+
+            System.out.println("freeswitch.service წარმატებით შეიქმნა");
+        } catch (Exception e) {
+            LOGGER.error("შეცდომა freeswitch.service შექმნისას: {}", e.getMessage());
+        }
+
+        System.out.println("freeswitch.service წარმატებით შეიქმნა");
     }
 }
