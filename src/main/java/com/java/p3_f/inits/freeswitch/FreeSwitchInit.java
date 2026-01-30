@@ -68,17 +68,10 @@ public class FreeSwitchInit implements CommandLineRunner {
                 // freeswitch
                 new String[] { "cd", SRC_DIR + "/freeswitch" },
                 new String[] { "./bootstrap.sh", "-j" },
-                // modules.conf რედაქტირება (nano-ს ავტომატიზაცია რთულია, აქ კომენტარად ვტოვებთ
-                // ხელით)
-                // შენიშვნა: nano-ს ავტომატურად გაშვება შესაძლებელია sed-ით:
-                new String[] { "sed", "-i", "s/^applications\\/mod_signalwire/#applications\\/mod_signalwire/",
-                        "modules.conf" },
-                new String[] { "sed", "-i",
-                        "s/^applications\\/mod_signalwire_consumer/#applications\\/mod_signalwire_consumer/",
-                        "modules.conf" },
-                new String[] { "sed", "-i",
-                        "s/^applications\\/mod_signalwire_transcribe/#applications\\/mod_signalwire_transcribe/",
-                        "modules.conf" },
+                
+                new String[] { "sed", "-i", "s/^applications\\/mod_signalwire/#applications\\/mod_signalwire/", "modules.conf" },
+                new String[] { "sed", "-i", "s/^applications\\/mod_signalwire_consumer/#applications\\/mod_signalwire_consumer/", "modules.conf" },
+                new String[] { "sed", "-i", "s/^applications\\/mod_signalwire_transcribe/#applications\\/mod_signalwire_transcribe/", "modules.conf" },
                 new String[] { "sed", "-i", "s/^applications\\/mod_verto/#applications\\/mod_verto/", "modules.conf" },
 
                 new String[] { "./configure" },
@@ -87,17 +80,16 @@ public class FreeSwitchInit implements CommandLineRunner {
                 new String[] { "make", "cd-sounds-install" },
                 new String[] { "make", "cd-moh-install" },
 
-                // user/group
-                new String[] { "groupadd", "freeswitch" },
-                new String[] { "useradd", "-r", "-g", "freeswitch", "-d", "/usr/local/freeswitch", "freeswitch" },
+                // მომხმარებლის და ჯგუფის შექმნა შემოწმებით (რომ არ მოხდეს RuntimeException თუ უკვე არსებობს)
+                new String[] { "sh", "-c", "getent group freeswitch || groupadd freeswitch" },
+                new String[] { "sh", "-c", "getent passwd freeswitch || useradd -r -g freeswitch -d /usr/local/freeswitch freeswitch" },
                 new String[] { "chown", "-R", "freeswitch:freeswitch", "/usr/local/freeswitch" });
 
         ProcessBuilder pb = new ProcessBuilder();
-        pb.inheritIO(); // ლოგები კონსოლში გამოვა
+        pb.inheritIO(); 
 
         for (String[] cmd : commands) {
             if (cmd[0].equals("cd")) {
-                // cd არ არის external command, მაგრამ ProcessBuilder-ში directory ვაყენებთ
                 pb.directory(new File(cmd[1]));
                 continue;
             }
@@ -118,7 +110,7 @@ public class FreeSwitchInit implements CommandLineRunner {
         Path servicePath = Path.of("/etc/systemd/system/freeswitch.service");
 
         if (Files.exists(servicePath)) {
-            System.out.println("freeswitch.service უკვე არსებობს");
+            LOGGER.info("freeswitch.service უკვე არსებობს");
             return;
         }
 
@@ -149,11 +141,13 @@ public class FreeSwitchInit implements CommandLineRunner {
                     StandardOpenOption.CREATE,
                     StandardOpenOption.WRITE);
 
-            System.out.println("freeswitch.service წარმატებით შეიქმნა");
+            LOGGER.info("freeswitch.service წარმატებით შეიქმნა");
+            
+            // სერვისის შექმნის შემდეგ systemd-ს დარეფრეშება
+            new ProcessBuilder("systemctl", "daemon-reload").start().waitFor();
+            
         } catch (Exception e) {
             LOGGER.error("შეცდომა freeswitch.service შექმნისას: {}", e.getMessage());
         }
-
-        System.out.println("freeswitch.service წარმატებით შეიქმნა");
     }
 }
