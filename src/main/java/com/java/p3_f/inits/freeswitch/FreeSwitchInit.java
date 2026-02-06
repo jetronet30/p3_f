@@ -145,6 +145,9 @@ public class FreeSwitchInit implements CommandLineRunner {
             
             // სერვისის შექმნის შემდეგ systemd-ს დარეფრეშება
             new ProcessBuilder("systemctl", "daemon-reload").start().waitFor();
+            new ProcessBuilder("systemctl", "enable", "freeswitch").start().waitFor();
+            new ProcessBuilder("systemctl", "start", "freeswitch").start().waitFor();
+            LOGGER.info("freeswitch.service ჩართულია და ავტომატურად იწყება სისტემის ჩართვისას");
             
         } catch (Exception e) {
             LOGGER.error("შეცდომა freeswitch.service შექმნისას: {}", e.getMessage());
