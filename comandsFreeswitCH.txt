@@ -1,0 +1,43 @@
+/usr/local/freeswitch/bin/fs_cli    შესვალა
+
+წაშლა
+sudo systemctl stop freeswitch
+sudo systemctl disable freeswitch
+
+
+sudo apt purge freeswitch freeswitch-*
+
+
+sudo apt purge freeswitch freeswitch-*
+
+sudo apt autoremove --purge
+sudo apt autoclean
+
+
+sudo rm -rf /etc/freeswitch
+sudo rm -rf /var/lib/freeswitch
+sudo rm -rf /var/log/freeswitch
+sudo rm -rf /usr/share/freeswitch
+
+
+sudo systemctl stop freeswitch
+sudo systemctl disable freeswitch
+
+cd /usr/local/src/freeswitch
+sudo make uninstall
+
+
+
+sudo rm -rf /usr/local/freeswitch
+sudo rm -rf /etc/freeswitch
+sudo rm -rf /var/log/freeswitch
+sudo rm -rf /var/run/freeswitch
+
+
+sudo rm -f /etc/systemd/system/freeswitch.service
+sudo systemctl daemon-reload
+
+which freeswitch
+ps aux | grep freeswitch
+dpkg -l | grep freeswitch
+
